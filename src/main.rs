@@ -5,6 +5,8 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::time::{Duration, Instant};
 
+mod input;
+
 struct Application {
     sdl: Option<sdl2::Sdl>,
     canvas: Option<sdl2::render::Canvas<sdl2::video::Window>>,
