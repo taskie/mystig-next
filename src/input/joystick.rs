@@ -1,17 +1,17 @@
 use super::button::Button;
-use super::axis::Axis2D;
+use super::axis::Axes2D;
 
 #[derive(Debug)]
 pub struct Joystick {
     buttons: Vec<Button>,
-    axes: Vec<Axis2D>,
+    axes_vec: Vec<Axes2D>,
 }
 
 impl Joystick {
-    pub fn new(buttons_len: usize, axes_len: usize) -> Joystick {
+    pub fn new(buttons_len: usize, axes_vec_len: usize) -> Joystick {
         Joystick {
             buttons: vec![Button::new(); buttons_len],
-            axes: vec![Axis2D::new(); axes_len],
+            axes_vec: vec![Axes2D::new(0); axes_vec_len],
         }
     }
 
@@ -19,8 +19,8 @@ impl Joystick {
         for button in self.buttons.iter_mut() {
             button.update();
         }
-        for axis in self.axes.iter_mut() {
-            axis.update();
+        for axes in self.axes_vec.iter_mut() {
+            axes.update();
         }
     }
 }
