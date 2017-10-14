@@ -6,6 +6,8 @@ authors = ["taskie <t@skie.jp>"]
 [dependencies]
 hlua = "0.3"
 rmp = "0.8"
+enum-map = "0.2.20"
+enum-map-derive = "0.2.4"
 
 [dependencies.sdl2]
 version = "0.30"

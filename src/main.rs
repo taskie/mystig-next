@@ -1,11 +1,17 @@
 extern crate sdl2;
 extern crate hlua;
 extern crate rmp;
+extern crate enum_map;
+#[macro_use]
+extern crate enum_map_derive;
+
+use std::time::{Duration, Instant};
 
 use sdl2::pixels::Color;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use std::time::{Duration, Instant};
+use sdl2::gfx;
+use sdl2::gfx::primitives::DrawRenderer;
 
 mod input;
 mod game;
@@ -16,15 +22,20 @@ struct Application<GameT: game::Game> {
     canvas: Option<sdl2::render::Canvas<sdl2::video::Window>>,
     game: GameT,
     finished: bool,
+    frame: i32,
 }
 
-impl <GameT> Application<GameT> where GameT: game::Game {
+impl<GameT> Application<GameT>
+where
+    GameT: game::Game,
+{
     fn new(game: GameT) -> Application<GameT> {
         Application::<GameT> {
             sdl: None,
             canvas: None,
             game,
             finished: false,
+            frame: 0,
         }
     }
 
@@ -35,8 +46,10 @@ impl <GameT> Application<GameT> where GameT: game::Game {
     fn prepare(&mut self) -> &mut Self {
         let sdl = sdl2::init().unwrap();
         let video_subsystem = sdl.video().unwrap();
+        let ttf_context = sdl2::ttf::init().unwrap();
 
-        let window = video_subsystem.window("rust-sdl2 demo: Video", 640, 480)
+        let window = video_subsystem
+            .window("rust-sdl2 demo: Video", 640, 480)
             .position_centered()
             .opengl()
             .build()
@@ -65,7 +78,7 @@ impl <GameT> Application<GameT> where GameT: game::Game {
             self.update();
 
             if self.finished {
-                break 'running
+                break 'running;
             }
 
             self.draw();
@@ -77,28 +90,26 @@ impl <GameT> Application<GameT> where GameT: game::Game {
             } else {
                 ::std::thread::sleep(Duration::new(0, 0));
             }
+            self.frame += 1;
         }
     }
 
 
     fn process_event(&mut self, event: Event) {
         match event {
-            Event::Quit {..} => {
+            Event::Quit { .. } => {
                 self.finished = true;
-            },
-            Event::KeyDown { keycode: Some(keycode), .. } => {
-
-            },
-            Event::KeyUp { keycode: Some(keycode), .. } => {
-
-            },
+            }
+            Event::KeyDown { keycode: Some(keycode), .. } => {}
+            Event::KeyUp { keycode: Some(keycode), .. } => {}
+            Event::MouseButtonDown { x, y, .. } => {}
             _ => {}
         }
     }
 
     fn update(&mut self) {
         self.game.update();
-        if ! self.finished {
+        if !self.finished {
             self.finished = self.game.finished();
         }
     }
@@ -106,6 +117,17 @@ impl <GameT> Application<GameT> where GameT: game::Game {
     fn draw(&mut self) {
         self.canvas.as_mut().unwrap().clear();
         self.game.draw();
+        let s: String = self.frame.to_string();
+        self.canvas
+            .as_mut()
+            .unwrap()
+            .string(0, 0, s.as_ref(), (255, 255, 255, 127))
+            .unwrap();
+        self.canvas
+            .as_mut()
+            .unwrap()
+            .polygon(&[0, 1, 2], &[3, 4, 5], 0xFF00FF77u32)
+            .unwrap();
         self.canvas.as_mut().unwrap().present();
     }
 }

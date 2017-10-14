@@ -1,0 +1,7 @@
+#!/bin/zsh
+set -eu
+
+if ! rustfmt --write-mode diff src/main.rs; then
+    rustfmt src/main.rs
+    exit 1
+fi

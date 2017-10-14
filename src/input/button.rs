@@ -1,6 +1,6 @@
-#[derive(Copy, Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Button {
-    status: i32
+    status: i32,
 }
 
 impl Button {

@@ -1,7 +1,0 @@
-struct ReplayRecorderInput {
-
-}
-
-struct ReplayPlayerInput {
-
-}
