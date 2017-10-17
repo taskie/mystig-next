@@ -1,5 +1,5 @@
 extern crate sdl2;
-extern crate hlua;
+extern crate rlua;
 extern crate rmp;
 extern crate enum_map;
 #[macro_use]
@@ -12,6 +12,7 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::gfx;
 use sdl2::gfx::primitives::DrawRenderer;
+use rlua::{Lua, MultiValue, Error};
 
 mod input;
 mod game;

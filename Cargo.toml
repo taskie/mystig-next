@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["taskie <t@skie.jp>"]
 
 [dependencies]
-hlua = "0.3"
+rlua = "0.9.3"
 rmp = "0.8"
 enum-map = "0.2.20"
 enum-map-derive = "0.2.4"

@@ -79,9 +79,9 @@ fn test_1() {
     axis.update();
     assert!(axis.x.negative_button.pressed());
     assert!(axis.x.negative_button.just());
-    assert!(! axis.x.positive_button.pressed());
+    assert!(!axis.x.positive_button.pressed());
     assert!(axis.x.positive_button.just());
-    assert!(! axis.y.negative_button.pressed());
+    assert!(!axis.y.negative_button.pressed());
     assert!(axis.y.negative_button.just());
     assert!(axis.y.positive_button.pressed());
     assert!(axis.y.positive_button.just());
@@ -89,22 +89,22 @@ fn test_1() {
     axis.set(-2, -2);
     axis.update();
     assert!(axis.x.negative_button.pressed());
-    assert!(! axis.x.negative_button.just());
-    assert!(! axis.x.positive_button.pressed());
-    assert!(! axis.x.positive_button.just());
+    assert!(!axis.x.negative_button.just());
+    assert!(!axis.x.positive_button.pressed());
+    assert!(!axis.x.positive_button.just());
     assert!(axis.y.negative_button.pressed());
     assert!(axis.y.negative_button.just());
-    assert!(! axis.y.positive_button.pressed());
+    assert!(!axis.y.positive_button.pressed());
     assert!(axis.y.positive_button.just());
 
     axis.set(0, 0);
     axis.update();
-    assert!(! axis.x.negative_button.pressed());
+    assert!(!axis.x.negative_button.pressed());
     assert!(axis.x.negative_button.just());
-    assert!(! axis.x.positive_button.pressed());
-    assert!(! axis.x.positive_button.just());
+    assert!(!axis.x.positive_button.pressed());
+    assert!(!axis.x.positive_button.just());
     assert!(!axis.y.negative_button.pressed());
     assert!(axis.y.negative_button.just());
-    assert!(! axis.y.positive_button.pressed());
-    assert!(! axis.y.positive_button.just());
+    assert!(!axis.y.positive_button.pressed());
+    assert!(!axis.y.positive_button.just());
 }
