@@ -4,15 +4,19 @@ extern crate rmp;
 extern crate enum_map;
 #[macro_use]
 extern crate enum_map_derive;
+extern crate glium;
+mod glium_sdl2;
 
 use std::time::{Duration, Instant};
 
+use sdl2::video;
+use sdl2::rect::Rect;
 use sdl2::pixels::Color;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use sdl2::gfx;
-use sdl2::gfx::primitives::DrawRenderer;
 use rlua::{Lua, MultiValue, Error};
+use glium::Surface;
+use glium_sdl2::DisplayBuild;
 
 mod input;
 mod game;
@@ -20,7 +24,7 @@ mod mystig;
 
 struct Application<GameT: game::Game> {
     sdl: Option<sdl2::Sdl>,
-    canvas: Option<sdl2::render::Canvas<sdl2::video::Window>>,
+    display: Option<glium_sdl2::Display>,
     game: GameT,
     finished: bool,
     frame: i32,
@@ -33,7 +37,7 @@ where
     fn new(game: GameT) -> Application<GameT> {
         Application::<GameT> {
             sdl: None,
-            canvas: None,
+            display: None,
             game,
             finished: false,
             frame: 0,
@@ -48,21 +52,17 @@ where
         let sdl = sdl2::init().unwrap();
         let video_subsystem = sdl.video().unwrap();
         let ttf_context = sdl2::ttf::init().unwrap();
+        video_subsystem.gl_attr().set_depth_size(24);
 
-        let window = video_subsystem
+        let display = video_subsystem
             .window("rust-sdl2 demo: Video", 640, 480)
             .position_centered()
             .opengl()
-            .build()
+            .build_glium()
             .unwrap();
 
-        let mut canvas = window.into_canvas().build().unwrap();
-        canvas.set_draw_color(Color::RGB(0, 0, 0));
-        canvas.clear();
-        canvas.present();
-
         self.sdl = Some(sdl);
-        self.canvas = Some(canvas);
+        self.display = Some(display);
         self
     }
 
@@ -116,20 +116,11 @@ where
     }
 
     fn draw(&mut self) {
-        self.canvas.as_mut().unwrap().clear();
         self.game.draw();
         let s: String = self.frame.to_string();
-        self.canvas
-            .as_mut()
-            .unwrap()
-            .string(0, 0, s.as_ref(), (255, 255, 255, 127))
-            .unwrap();
-        self.canvas
-            .as_mut()
-            .unwrap()
-            .polygon(&[0, 1, 2], &[3, 4, 5], 0xFF00FF77u32)
-            .unwrap();
-        self.canvas.as_mut().unwrap().present();
+        let mut target = self.display.clone().unwrap().draw();
+        target.clear_color_and_depth((0.5, 0.5, 1.0, 0.0), 1.0);
+        target.finish().unwrap();
     }
 }
 

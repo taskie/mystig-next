@@ -13,3 +13,8 @@ enum-map-derive = "0.2.4"
 version = "0.30"
 default-features = false
 features = ["ttf", "image", "gfx", "mixer"]
+
+[dependencies.glium]
+version = "0.18"
+default-features = false
+features = []
