@@ -1,4 +1,4 @@
-#version 140
+#version 300 es
 
 in mediump vec2 position;
 in mediump vec4 vert_color;

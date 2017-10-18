@@ -59,6 +59,10 @@ where
         video_subsystem.gl_attr().set_depth_size(24);
         video_subsystem.gl_attr().set_multisample_buffers(1);
         video_subsystem.gl_attr().set_multisample_samples(4);
+        video_subsystem.gl_attr().set_context_major_version(3);
+        if cfg!(target_os="macos") {
+            video_subsystem.gl_attr().set_context_profile(sdl2::video::GLProfile::Core);
+        }
 
         let display = video_subsystem
             .window("rust-sdl2 demo: Video", 640, 480)
