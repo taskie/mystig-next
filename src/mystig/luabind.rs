@@ -1,5 +1,7 @@
 use rlua::Lua;
 
+use loader::Loader;
+
 pub struct Binder {
     pub lua: Lua,
 }
@@ -15,15 +17,17 @@ impl Binder {
     }
 
     fn lua_to_rust(&self) {
-        self.do_file("")
+        self.do_file("./assets/scripts/main.lua")
     }
 
     fn rust_to_lua(&self) {}
 
     fn do_file(&self, path: &str) {
-        let s = "Mys = { update = function () end, draw = function () end }";
-        if let Err(e) = self.lua.eval::<()>(s, None) {
-            println!("{:?}", e)
+        let result = Loader::read_file(path);
+        if let Ok(s) = result {
+            if let Err(e) = self.lua.eval::<()>(s.as_str(), None) {
+                println!("{:?}", e)
+            }
         }
     }
 }

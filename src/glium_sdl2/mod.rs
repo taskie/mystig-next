@@ -212,10 +212,7 @@ pub trait DisplayBuild {
     ///
     /// This function does the same as `build_glium`, except that the resulting context
     /// will assume that the current OpenGL context will never change.
-    unsafe fn build_glium_unchecked_debug(
-        self,
-        debug::DebugCallbackBehavior,
-    ) -> Result<Self::Facade, Self::Err>;
+    unsafe fn build_glium_unchecked_debug(self, debug::DebugCallbackBehavior) -> Result<Self::Facade, Self::Err>;
 
     // TODO
     // Changes the settings of an existing facade.
@@ -226,10 +223,7 @@ impl<'a> DisplayBuild for &'a mut sdl2::video::WindowBuilder {
     type Facade = SDL2Facade;
     type Err = GliumSdl2Error;
 
-    fn build_glium_debug(
-        self,
-        debug: debug::DebugCallbackBehavior,
-    ) -> Result<SDL2Facade, GliumSdl2Error> {
+    fn build_glium_debug(self, debug: debug::DebugCallbackBehavior) -> Result<SDL2Facade, GliumSdl2Error> {
         let backend = Rc::new(try!(SDL2WindowBackend::new(self)));
         let context = try!(unsafe { Context::new(backend.clone(), true, debug) });
 
@@ -281,9 +275,7 @@ impl SDL2WindowBackend {
         window
     }
 
-    pub fn new(
-        window_builder: &mut sdl2::video::WindowBuilder,
-    ) -> Result<SDL2WindowBackend, GliumSdl2Error> {
+    pub fn new(window_builder: &mut sdl2::video::WindowBuilder) -> Result<SDL2WindowBackend, GliumSdl2Error> {
         let window = try!(window_builder.opengl().build());
         let context = try!(window.gl_create_context());
 
