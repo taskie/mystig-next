@@ -60,12 +60,14 @@ where
         video_subsystem.gl_attr().set_multisample_buffers(1);
         video_subsystem.gl_attr().set_multisample_samples(4);
         video_subsystem.gl_attr().set_context_major_version(3);
-        if cfg!(target_os="macos") {
-            video_subsystem.gl_attr().set_context_profile(sdl2::video::GLProfile::Core);
+        if cfg!(target_os = "macos") {
+            video_subsystem.gl_attr().set_context_profile(
+                sdl2::video::GLProfile::Core,
+            );
         }
 
         let display = video_subsystem
-            .window("rust-sdl2 demo: Video", 640, 480)
+            .window("Rust SDL Lua", 640, 480)
             .position_centered()
             .build_glium()
             .unwrap();
@@ -76,16 +78,7 @@ where
         self
     }
 
-    fn load(&mut self) {
-        self.loader.load(
-            "basic.vert",
-            "./assets/shaders/basic.vert",
-        );
-        self.loader.load(
-            "basic.frag",
-            "./assets/shaders/basic.frag",
-        );
-    }
+    fn load(&mut self) {}
 
     fn run(&mut self) {
         let sdl = self.sdl.clone().unwrap();
@@ -108,9 +101,9 @@ where
             let elapsed = now.elapsed();
             let asleep_time = Duration::new(0, 1_000_000_000 / 60);
             if let Some(nanos) = asleep_time.checked_sub(elapsed) {
-                ::std::thread::sleep(nanos);
+                std::thread::sleep(nanos);
             } else {
-                ::std::thread::sleep(Duration::new(0, 0));
+                std::thread::sleep(Duration::new(0, 0));
             }
             self.frame += 1;
         }
@@ -137,52 +130,10 @@ where
     }
 
     fn draw(&mut self) {
-        let display = self.display.clone().unwrap();
-
-        let frag = self.loader.get("basic.frag").unwrap();
-        let vert = self.loader.get("basic.vert").unwrap();
-        let program = glium::Program::from_source(&display, vert, frag, None).unwrap();
-
-        let vertex1 = ColoredVertex {
-            position: [0.0, 0.5],
-            vert_color: [1.0, 0.0, 0.0, 1.0],
-        };
-        let vertex2 = ColoredVertex {
-            position: [-0.5, -0.5],
-            vert_color: [0.0, 1.0, 0.0, 1.0],
-        };
-        let vertex3 = ColoredVertex {
-            position: [0.5, -0.5],
-            vert_color: [0.0, 0.0, 1.0, 1.0],
-        };
-        let shape = vec![vertex1, vertex2, vertex3];
-        let vertex_buffer = glium::VertexBuffer::new(&display, &shape).unwrap();
-        let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
-
-        self.game.draw();
-        let s: String = self.frame.to_string();
-        let mut target = display.draw();
-        target.clear_color_and_depth((0.5, 0.5, 1.0, 0.0), 1.0);
-        target
-            .draw(
-                &vertex_buffer,
-                &indices,
-                &program,
-                &glium::uniforms::EmptyUniforms,
-                &Default::default(),
-            )
-            .unwrap();
-        target.finish().unwrap();
+        let mut display = self.display.clone().unwrap();
+        self.game.draw(&mut display);
     }
 }
-
-#[derive(Copy, Clone)]
-struct ColoredVertex {
-    position: [f32; 2],
-    vert_color: [f32; 4],
-}
-
-implement_vertex!(ColoredVertex, position, vert_color);
 
 pub fn main() {
     let mut app = Application::new(mystig::Mystig::new());

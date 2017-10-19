@@ -1,9 +1,11 @@
-Mys = {}
+package.path = "./assets/scripts/?.lua;./assets/scripts/?/init.lua;" .. package.path
+mystig = require("mystig")
+object = require("object")
 
-function Mys.update()
-
+function update()
+    mystig.update()
 end
 
-function Mys.draw()
-
+function draw()
+    mystig.draw()
 end
