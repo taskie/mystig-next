@@ -24,6 +24,10 @@ mod game;
 mod loader;
 mod mystig;
 
+macro_rules! a {
+    ($a: expr) => { $a; $a };
+}
+
 struct Application<GameT: game::Game> {
     sdl: Option<sdl2::Sdl>,
     display: Option<glium_sdl2::Display>,
@@ -56,6 +60,7 @@ where
         let sdl = sdl2::init().unwrap();
         let video_subsystem = sdl.video().unwrap();
         let ttf_context = sdl2::ttf::init().unwrap();
+
         video_subsystem.gl_attr().set_depth_size(24);
         video_subsystem.gl_attr().set_multisample_buffers(1);
         video_subsystem.gl_attr().set_multisample_samples(4);

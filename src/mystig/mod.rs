@@ -1,6 +1,7 @@
 mod actor;
 mod scene;
 mod luabind;
+mod shape;
 
 use super::game::Game;
 use rlua;
@@ -61,15 +62,15 @@ impl Game for Mystig {
         let vert = self.loader.get("basic.vert").unwrap();
         let program = glium::Program::from_source(display, vert, frag, None).unwrap();
 
-        let vertex1 = ColoredVertex2D {
+        let vertex1 = shape::ColoredVertex2D {
             position: [0.0, 0.5],
             vert_color: [1.0, 0.0, 0.0, 1.0],
         };
-        let vertex2 = ColoredVertex2D {
+        let vertex2 = shape::ColoredVertex2D {
             position: [-0.5, -0.5],
             vert_color: [0.0, 1.0, 0.0, 1.0],
         };
-        let vertex3 = ColoredVertex2D {
+        let vertex3 = shape::ColoredVertex2D {
             position: [0.5, -0.5],
             vert_color: [0.0, 0.0, 1.0, 1.0],
         };
@@ -95,19 +96,3 @@ impl Game for Mystig {
         false
     }
 }
-
-
-#[derive(Copy, Clone)]
-struct ColoredVertex2D {
-    position: [f32; 2],
-    vert_color: [f32; 4],
-}
-
-implement_vertex!(ColoredVertex2D, position, vert_color);
-
-#[derive(Copy, Clone)]
-struct Vertex2D {
-    position: [f32; 2],
-}
-
-implement_vertex!(Vertex2D, position);
