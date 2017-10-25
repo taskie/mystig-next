@@ -67,9 +67,9 @@ pub fn rect_2d<T: HasXY>(vertex: T, width: f32, height: f32) -> [T; 4] {
     [lt, rt, lb, rb]
 }
 
-pub fn regular_polygon(center: Vertex2D, radius: f32, n: usize) -> Vec<Vertex2D> {
+pub fn regular_polygon_line(center: Vertex2D, radius: f32, n: usize) -> Vec<Vertex2D> {
     let mut vs = Vec::with_capacity(n);
-    for i in 0..n {
+    for i in 0..(n + 1) {
         let t = f32::consts::PI * 2.0 * (i as f32) / (n as f32);
         vs.push(Vertex2D::from_xy(
             radius * f32::cos(t),
@@ -79,9 +79,31 @@ pub fn regular_polygon(center: Vertex2D, radius: f32, n: usize) -> Vec<Vertex2D>
     vs
 }
 
-pub fn circle(center: Vertex2D, radius: f32) -> Vec<Vertex2D> {
+pub fn regular_polygon_fill(center: Vertex2D, radius: f32, n: usize) -> Vec<Vertex2D> {
+    let mut vs = Vec::with_capacity(n);
+    for i in 0..n {
+        let k = if i % 2 == 0 {
+            -((i / 2) as i32)
+        } else {
+            ((i + 1) / 2) as i32
+        };
+        let t = f32::consts::PI * 2.0 * (k as f32) / (n as f32);
+        vs.push(Vertex2D::from_xy(
+            radius * f32::cos(t),
+            radius * f32::sin(t),
+        ));
+    }
+    vs
+}
+
+pub fn circle_line(center: Vertex2D, radius: f32) -> Vec<Vertex2D> {
     let n = 2.0 * f32::consts::PI / f32::asin(1.0 / (f32::sqrt(radius + 1.0)));
-    regular_polygon(center, radius, n as usize)
+    regular_polygon_line(center, radius, n as usize)
+}
+
+pub fn circle_fill(center: Vertex2D, radius: f32) -> Vec<Vertex2D> {
+    let n = 2.0 * f32::consts::PI / f32::asin(1.0 / (f32::sqrt(radius + 1.0)));
+    regular_polygon_fill(center, radius, n as usize)
 }
 
 struct Path2DBuilder<T: Clone + HasXY> {

@@ -62,33 +62,30 @@ impl Game for Mystig {
         let vert = self.loader.get("basic.vert").unwrap();
         let program = glium::Program::from_source(display, vert, frag, None).unwrap();
 
-        let vertex1 = shape::ColoredVertex2D {
-            position: [0.0, 0.5],
-            vert_color: [1.0, 0.0, 0.0, 1.0],
-        };
-        let vertex2 = shape::ColoredVertex2D {
-            position: [-0.5, -0.5],
-            vert_color: [0.0, 1.0, 0.0, 1.0],
-        };
-        let vertex3 = shape::ColoredVertex2D {
-            position: [0.5, -0.5],
-            vert_color: [0.0, 0.0, 1.0, 1.0],
-        };
-        let shape = vec![vertex1, vertex2, vertex3];
-        let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
-        let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+        use mystig::shape::HasXY;
 
         let mut target = display.draw();
-        target.clear_color_and_depth((0.5, 0.5, 1.0, 0.0), 1.0);
-        target
-            .draw(
-                &vertex_buffer,
-                &indices,
-                &program,
-                &glium::uniforms::EmptyUniforms,
-                &Default::default(),
-            )
-            .unwrap();
+        target.clear_color_and_depth((0.25, 0.25, 0.25, 1.0), 1.0);
+        let indices = glium::index::NoIndices(glium::index::PrimitiveType::TriangleStrip);
+
+        for i in 1i32..3 {
+            let s = shape::circle_fill(shape::Vertex2D::from_xy(0.0, 0.0), i as f32 / 3.0);
+            let vertex_buffer = glium::VertexBuffer::new(display, &s).unwrap();
+            let uniforms = uniform! {
+                z: (i as f32),
+                my_color: [1.0f32 / (i as f32), 0.0, 0.0, 1.0],
+            };
+
+            target
+                .draw(
+                    &vertex_buffer,
+                    &indices,
+                    &program,
+                    &uniforms,
+                    &Default::default(),
+                )
+                .unwrap();
+        }
         target.finish().unwrap();
     }
 

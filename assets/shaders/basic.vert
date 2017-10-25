@@ -1,10 +1,8 @@
 #version 140
 
 in mediump vec2 position;
-in mediump vec4 vert_color;
-out mediump vec4 my_color;
+uniform mediump float z;
 
 void main() {
-    gl_Position = vec4(position, 0.0, 1.0);
-    my_color = vert_color;
+    gl_Position = vec4(position, z, 1.0);
 }

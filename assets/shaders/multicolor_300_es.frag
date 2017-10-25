@@ -1,6 +1,6 @@
-#version 140
+#version 300 es
 
-uniform mediump vec4 my_color;
+in mediump vec4 my_color;
 out mediump vec4 color;
 
 void main() {
