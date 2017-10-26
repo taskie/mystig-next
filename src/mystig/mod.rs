@@ -12,6 +12,7 @@ use glium_sdl2;
 use super::loader::Loader;
 
 pub struct Mystig {
+    frame: i32,
     lua: Lua,
     loader: Loader,
 }
@@ -26,6 +27,7 @@ impl Mystig {
         let binder = luabind::Binder::new();
         binder.bind();
         Mystig {
+            frame: 0,
             lua: binder.lua,
             loader,
         }
@@ -50,6 +52,7 @@ impl Game for Mystig {
             Ok(_) => {}
             Err(e) => println!("{:?}", e),
         }
+        self.frame += 1;
     }
 
     fn draw(&self, display: &mut glium_sdl2::Display) -> () {
@@ -65,15 +68,58 @@ impl Game for Mystig {
         use mystig::shape::HasXY;
 
         let mut target = display.draw();
-        target.clear_color_and_depth((0.25, 0.25, 0.25, 1.0), 1.0);
-        let indices = glium::index::NoIndices(glium::index::PrimitiveType::TriangleStrip);
+        target.clear_color_and_depth((0.02, 0.02, 0.02, 1.0), 1.0);
 
-        for i in 1i32..3 {
-            let s = shape::circle_fill(shape::Vertex2D::from_xy(0.0, 0.0), i as f32 / 3.0);
+        let xys = [
+            shape::Vertex2D::from_xy(0.0f32 + 100.0, 100.0),
+            shape::Vertex2D::from_xy(320.0f32, 240.0),
+            shape::Vertex2D::from_xy(640.0f32 - 100.0, 480.0 - 100.0),
+        ];
+        for i in 1i32..4 {
+            let s = shape::circle_line(xys[i as usize - 1],
+                                       i as f32 * 100.0 * (1.0 + f32::sin(self.frame as f32 / 50.0)));
             let vertex_buffer = glium::VertexBuffer::new(display, &s).unwrap();
+            let indices = glium::index::NoIndices(glium::index::PrimitiveType::LineStrip);
             let uniforms = uniform! {
-                z: (i as f32),
-                my_color: [1.0f32 / (i as f32), 0.0, 0.0, 1.0],
+                z: 0.0f32,
+                my_color: [1.0 / (i as f32), 0.0, 0.0, 0.5f32],
+            };
+            target
+                .draw(
+                    &vertex_buffer,
+                    &indices,
+                    &program,
+                    &uniforms,
+                    &Default::default(),
+                )
+                .unwrap();
+
+            let s = shape::circle_fill(xys[i as usize - 1],
+                                       i as f32 * 100.0 * (1.0 + f32::sin(self.frame as f32 / 50.0)));
+            let vertex_buffer = glium::VertexBuffer::new(display, &s).unwrap();
+            let indices = glium::index::NoIndices(glium::index::PrimitiveType::TriangleStrip);
+            let params = glium::DrawParameters {
+                blend: glium::draw_parameters::Blend::alpha_blending(),
+                .. Default::default()
+            };
+            target
+                .draw(
+                    &vertex_buffer,
+                    &indices,
+                    &program,
+                    &uniforms,
+                    &params,
+                )
+                .unwrap();
+        }
+
+        {
+            let s = shape::rect_line(shape::Vertex2D::from_xy(0.0f32, 240.0), 320.0f32, 240.0f32);
+            let vertex_buffer = glium::VertexBuffer::new(display, &s).unwrap();
+            let indices = glium::index::NoIndices(glium::index::PrimitiveType::LineStrip);
+            let uniforms = uniform! {
+                z: 0.0f32,
+                my_color: [0.0, 0.0, 1.0, 0.5f32],
             };
 
             target
@@ -85,7 +131,30 @@ impl Game for Mystig {
                     &Default::default(),
                 )
                 .unwrap();
+
+            let s = shape::rect_fill(shape::Vertex2D::from_xy(0.0f32, 240.0), 320.0f32, 240.0f32);
+            let vertex_buffer = glium::VertexBuffer::new(display, &s).unwrap();
+            let indices = glium::index::NoIndices(glium::index::PrimitiveType::TriangleStrip);
+            let uniforms = uniform! {
+                z: 0.0f32,
+                my_color: [0.0, 0.0, 1.0, 0.1f32],
+            };
+            let params = glium::DrawParameters {
+                blend: glium::draw_parameters::Blend::alpha_blending(),
+                .. Default::default()
+            };
+
+            target
+                .draw(
+                    &vertex_buffer,
+                    &indices,
+                    &program,
+                    &uniforms,
+                    &params,
+                )
+                .unwrap();
         }
+
         target.finish().unwrap();
     }
 
