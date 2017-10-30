@@ -72,7 +72,7 @@ where
         }
 
         let display = video_subsystem
-            .window("Rust SDL Lua", 640, 480)
+            .window("MYSTiG Next", 640, 480)
             .position_centered()
             .build_glium()
             .unwrap();

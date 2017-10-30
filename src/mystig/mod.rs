@@ -21,7 +21,7 @@ impl Mystig {
     pub fn new() -> Mystig {
         let mut loader = Loader::new();
 
-        loader.load("basic.vert", "./assets/shaders/basic.vert");
+        loader.load("actor.vert", "./assets/shaders/actor.vert");
         loader.load("basic.frag", "./assets/shaders/basic.frag");
 
         let binder = luabind::Binder::new();
@@ -62,7 +62,7 @@ impl Game for Mystig {
         }
 
         let frag = self.loader.get("basic.frag").unwrap();
-        let vert = self.loader.get("basic.vert").unwrap();
+        let vert = self.loader.get("actor.vert").unwrap();
         let program = glium::Program::from_source(display, vert, frag, None).unwrap();
 
         use mystig::shape::HasXY;
@@ -71,16 +71,19 @@ impl Game for Mystig {
         target.clear_color_and_depth((0.02, 0.02, 0.02, 1.0), 1.0);
 
         let xys = [
-            shape::Vertex2D::from_xy(0.0f32 + 100.0, 100.0),
-            shape::Vertex2D::from_xy(320.0f32, 240.0),
-            shape::Vertex2D::from_xy(640.0f32 - 100.0, 480.0 - 100.0),
+            [0.0f32 + 100.0, 100.0],
+            [320.0f32, 240.0],
+            [640.0f32 - 100.0, 480.0 - 100.0],
         ];
         for i in 1i32..4 {
-            let s = shape::circle_line(xys[i as usize - 1],
+            let s = shape::circle_line(shape::Vertex2D::from_xy(0.0f32, 0.0f32),
                                        i as f32 * 100.0 * (1.0 + f32::sin(self.frame as f32 / 50.0)));
             let vertex_buffer = glium::VertexBuffer::new(display, &s).unwrap();
             let indices = glium::index::NoIndices(glium::index::PrimitiveType::LineStrip);
             let uniforms = uniform! {
+                angle: 0.0f32,
+                scale: 1.0f32,
+                translate: xys[i as usize - 1],
                 z: 0.0f32,
                 my_color: [1.0 / (i as f32), 0.0, 0.0, 0.5f32],
             };
@@ -94,7 +97,7 @@ impl Game for Mystig {
                 )
                 .unwrap();
 
-            let s = shape::circle_fill(xys[i as usize - 1],
+            let s = shape::circle_fill(shape::Vertex2D::from_xy(0.0f32, 0.0f32),
                                        i as f32 * 100.0 * (1.0 + f32::sin(self.frame as f32 / 50.0)));
             let vertex_buffer = glium::VertexBuffer::new(display, &s).unwrap();
             let indices = glium::index::NoIndices(glium::index::PrimitiveType::TriangleStrip);
@@ -114,10 +117,13 @@ impl Game for Mystig {
         }
 
         {
-            let s = shape::rect_line(shape::Vertex2D::from_xy(0.0f32, 240.0), 320.0f32, 240.0f32);
+            let s = shape::rect_line(shape::Vertex2D::from_xy(0.0f32, 0.0f32), 320.0f32, 240.0f32);
             let vertex_buffer = glium::VertexBuffer::new(display, &s).unwrap();
             let indices = glium::index::NoIndices(glium::index::PrimitiveType::LineStrip);
             let uniforms = uniform! {
+                angle: 0.0f32 + self.frame as f32,
+                scale: 1.0f32,
+                translate: [0.0f32, 240.0f32],
                 z: 0.0f32,
                 my_color: [0.0, 0.0, 1.0, 0.5f32],
             };
@@ -132,10 +138,13 @@ impl Game for Mystig {
                 )
                 .unwrap();
 
-            let s = shape::rect_fill(shape::Vertex2D::from_xy(0.0f32, 240.0), 320.0f32, 240.0f32);
+            let s = shape::rect_fill(shape::Vertex2D::from_xy(0.0f32, 0.0f32), 320.0f32, 240.0f32);
             let vertex_buffer = glium::VertexBuffer::new(display, &s).unwrap();
             let indices = glium::index::NoIndices(glium::index::PrimitiveType::TriangleStrip);
             let uniforms = uniform! {
+                angle: 0.0f32 + self.frame as f32,
+                scale: 1.0f32,
+                translate: [0.0f32, 240.0f32],
                 z: 0.0f32,
                 my_color: [0.0, 0.0, 1.0, 0.1f32],
             };

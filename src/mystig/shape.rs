@@ -59,12 +59,13 @@ implement_vertex!(Vertex2D, position);
 
 // Shape
 
-pub fn rect_line<T: HasXY>(vertex: T, width: f32, height: f32) -> [T; 4] {
+pub fn rect_line<T: HasXY>(vertex: T, width: f32, height: f32) -> [T; 5] {
     let lt = T::from_xy(vertex.x(), vertex.y());
     let rt = T::from_xy(vertex.x() + width, vertex.y());
     let lb = T::from_xy(vertex.x(), vertex.y() + height);
     let rb = T::from_xy(vertex.x() + width, vertex.y() + height);
-    [lt, rt, rb, lb]
+    let lt2 = T::from_xy(vertex.x(), vertex.y());
+    [lt, rt, rb, lb, lt2]
 }
 
 pub fn rect_fill<T: HasXY>(vertex: T, width: f32, height: f32) -> [T; 4] {
