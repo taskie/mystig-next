@@ -9,6 +9,7 @@ use rlua::{Function, Lua, Table};
 use glium;
 use glium::Surface;
 use glium_sdl2;
+use nalgebra as na;
 use super::loader::Loader;
 
 pub struct Mystig {
@@ -67,6 +68,19 @@ impl Game for Mystig {
 
         use mystig::shape::HasXY;
 
+        let model_view_projection = {
+            let model = na::Isometry3::new(na::Vector3::x(), na::zero());
+            let eye    = na::Point3::new(0.0f32, 1.0 * f32::sin(self.frame as f32 / 40.0),  1.0);
+            let target = na::Point3::new(1.0f32 * f32::sin(self.frame as f32 / 70.0), 0.0, -1.0);
+            let view   = na::Isometry3::look_at_rh(&eye, &target, &na::Vector3::y());
+            let projection = na::Perspective3::new(
+                16.0f32 / 9.0f32, 3.14f32 / 2.0f32, 0.0f32, 1000.0f32);
+            let model_view = view * model;
+            let mat_model_view = model_view.to_homogeneous();
+            projection.as_matrix() * mat_model_view
+        };
+        let mvp_array: &[[f32; 4]; 4] = model_view_projection.as_ref();
+
         let mut target = display.draw();
         target.clear_color_and_depth((0.02, 0.02, 0.02, 1.0), 1.0);
 
@@ -82,6 +96,7 @@ impl Game for Mystig {
             let indices = glium::index::NoIndices(glium::index::PrimitiveType::LineStrip);
             let uniforms = uniform! {
                 z: 0.0f32,
+                mvp_matrix: *mvp_array,
                 my_color: [1.0 / (i as f32), 0.0, 0.0, 0.5f32],
             };
             target
@@ -119,6 +134,7 @@ impl Game for Mystig {
             let indices = glium::index::NoIndices(glium::index::PrimitiveType::LineStrip);
             let uniforms = uniform! {
                 z: 0.0f32,
+                mvp_matrix: *mvp_array,
                 my_color: [0.0, 0.0, 1.0, 0.5f32],
             };
 
@@ -137,6 +153,7 @@ impl Game for Mystig {
             let indices = glium::index::NoIndices(glium::index::PrimitiveType::TriangleStrip);
             let uniforms = uniform! {
                 z: 0.0f32,
+                mvp_matrix: *mvp_array,
                 my_color: [0.0, 0.0, 1.0, 0.1f32],
             };
             let params = glium::DrawParameters {

@@ -1,12 +1,12 @@
 extern crate sdl2;
 extern crate rlua;
 extern crate rmp;
-extern crate enum_map;
-#[macro_use]
-extern crate enum_map_derive;
+extern crate nalgebra;
 #[macro_use]
 extern crate glium;
 mod glium_sdl2;
+#[cfg(target_os = "emscripten")]
+pub mod emscripten_helper;
 
 use std::time::{Duration, Instant};
 
@@ -18,15 +18,14 @@ use sdl2::keyboard::Keycode;
 use rlua::{Lua, MultiValue, Error};
 use glium::Surface;
 use glium_sdl2::DisplayBuild;
+#[cfg(target_os = "emscripten")]
+use emscripten_helper::{emscripten};
 
 mod input;
 mod game;
 mod loader;
 mod mystig;
 
-macro_rules! a {
-    ($a: expr) => { $a; $a };
-}
 
 struct Application<GameT: game::Game> {
     sdl: Option<sdl2::Sdl>,
@@ -89,7 +88,7 @@ where
         let sdl = self.sdl.clone().unwrap();
         let mut event_pump = sdl.event_pump().unwrap();
 
-        'running: loop {
+        let mut main_loop = || {
             let now = Instant::now();
 
             for event in event_pump.poll_iter() {
@@ -98,7 +97,7 @@ where
             self.update();
 
             if self.finished {
-                break 'running;
+                return false
             }
 
             self.draw();
@@ -111,6 +110,17 @@ where
                 std::thread::sleep(Duration::new(0, 0));
             }
             self.frame += 1;
+            return true
+        };
+
+        #[cfg(target_os = "emscripten")]
+        emscripten::set_main_loop_callback(|| { main_loop(); });
+
+        #[cfg(not(target_os = "emscripten"))]
+        loop {
+            if ! main_loop() {
+                break
+            }
         }
     }
 

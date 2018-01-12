@@ -1,10 +1,12 @@
 #version 300 es
 
 in mediump vec2 position;
-in mediump vec4 vert_color;
-out mediump vec4 my_color;
+uniform mediump float z;
+uniform mediump mat4 mvp_matrix;
 
 void main() {
-    gl_Position = vec4(position, 0.0, 1.0);
-    my_color = vert_color;
+    gl_Position = mvp_matrix * vec4(position.x / 320.0f - 1.0f,
+                                    -position.y / 240.0f + 1.0f,
+                                    z,
+                                    1.0f);
 }

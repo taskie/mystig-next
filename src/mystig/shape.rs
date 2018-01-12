@@ -59,6 +59,12 @@ implement_vertex!(Vertex2D, position);
 
 // Shape
 
+pub struct Shape2D {
+    pub vertices: Vec<f32>,
+    pub indices: Vec<i32>,
+}
+
+
 pub fn rect_line<T: HasXY>(vertex: T, width: f32, height: f32) -> [T; 4] {
     let lt = T::from_xy(vertex.x(), vertex.y());
     let rt = T::from_xy(vertex.x() + width, vertex.y());
