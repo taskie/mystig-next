@@ -1,9 +1,12 @@
-pub mod button;
 pub mod axis;
+pub mod button;
 
-pub mod keyboard;
 pub mod joystick;
+pub mod keyboard;
 pub mod mouse;
+
+pub use self::axis::Axis;
+pub use self::button::Button;
 
 #[derive(Debug)]
 pub enum Device {

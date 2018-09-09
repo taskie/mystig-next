@@ -1,32 +1,26 @@
-extern crate sdl2;
 extern crate rlua;
 extern crate rmp;
-extern crate enum_map;
-#[macro_use]
-extern crate enum_map_derive;
+extern crate sdl2;
 #[macro_use]
 extern crate glium;
+extern crate nalgebra;
 mod glium_sdl2;
 
 use std::time::{Duration, Instant};
 
-use sdl2::video;
-use sdl2::rect::Rect;
-use sdl2::pixels::Color;
-use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
-use rlua::{Lua, MultiValue, Error};
 use glium::Surface;
 use glium_sdl2::DisplayBuild;
+use rlua::{Error, Lua, MultiValue};
+use sdl2::event::Event;
+use sdl2::keyboard::Keycode;
+use sdl2::pixels::Color;
+use sdl2::rect::Rect;
+use sdl2::video;
 
-mod input;
 mod game;
+mod input;
 mod loader;
 mod mystig;
-
-macro_rules! a {
-    ($a: expr) => { $a; $a };
-}
 
 struct Application<GameT: game::Game> {
     sdl: Option<sdl2::Sdl>,
@@ -66,9 +60,9 @@ where
         video_subsystem.gl_attr().set_multisample_samples(4);
         video_subsystem.gl_attr().set_context_major_version(3);
         if cfg!(target_os = "macos") {
-            video_subsystem.gl_attr().set_context_profile(
-                sdl2::video::GLProfile::Core,
-            );
+            video_subsystem
+                .gl_attr()
+                .set_context_profile(sdl2::video::GLProfile::Core);
         }
 
         let display = video_subsystem
@@ -114,16 +108,12 @@ where
         }
     }
 
-
     fn process_event(&mut self, event: Event) {
         match event {
             Event::Quit { .. } => {
                 self.finished = true;
             }
-            Event::KeyDown { keycode: Some(keycode), .. } => {}
-            Event::KeyUp { keycode: Some(keycode), .. } => {}
-            Event::MouseButtonDown { x, y, .. } => {}
-            _ => {}
+            _ => self.game.process_event(event),
         }
     }
 

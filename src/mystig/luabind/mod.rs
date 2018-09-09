@@ -1,4 +1,4 @@
-use rlua::Lua;
+use rlua::{self, Lua};
 
 use loader::Loader;
 
@@ -20,7 +20,14 @@ impl Binder {
         self.do_file("./assets/scripts/main.lua")
     }
 
-    fn rust_to_lua(&self) {}
+    fn rust_to_lua(&self) -> rlua::Result<()> {
+        let g = self.lua.globals();
+        g.set(
+            "fma",
+            self.lua.create_function(|_, (a, b, c): (f64, f64, f64)| Ok(a * b + c)),
+        )?;
+        Ok(())
+    }
 
     fn do_file(&self, path: &str) {
         let result = Loader::read_file(path);

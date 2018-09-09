@@ -18,6 +18,12 @@ impl Axis {
         }
     }
 
+    pub fn reset(&mut self) {
+        self.value = 0;
+        self.negative_button.reset();
+        self.positive_button.reset();
+    }
+
     pub fn set(&mut self, value: i32) {
         self.value = value
     }

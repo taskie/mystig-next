@@ -52,24 +52,23 @@
 //! # }
 //! ```
 
-use std;
 use glium;
 use sdl2;
+use std;
 
-use std::mem;
 use std::cell::UnsafeCell;
+use std::mem;
 use std::ops::Deref;
-use std::rc::Rc;
 use std::os::raw::c_void;
+use std::rc::Rc;
 
-use glium::{IncompatibleOpenGl, SwapBuffersError};
-use glium::debug;
 use glium::backend::{Backend, Context, Facade};
-use sdl2::VideoSubsystem;
+use glium::debug;
+use glium::{IncompatibleOpenGl, SwapBuffersError};
 use sdl2::video::{Window, WindowBuildError};
+use sdl2::VideoSubsystem;
 
 pub type Display = SDL2Facade;
-
 
 #[derive(Debug)]
 pub enum GliumSdl2Error {
@@ -120,7 +119,6 @@ impl std::fmt::Display for GliumSdl2Error {
     }
 }
 
-
 /// Facade implementation for an SDL2 window.
 #[derive(Clone)]
 pub struct SDL2Facade {
@@ -160,10 +158,7 @@ impl SDL2Facade {
     ///
     /// Note that destroying a `Frame` is immediate, even if vsync is enabled.
     pub fn draw(&self) -> glium::Frame {
-        glium::Frame::new(
-            self.context.clone(),
-            self.backend.get_framebuffer_dimensions(),
-        )
+        glium::Frame::new(self.context.clone(), self.backend.get_framebuffer_dimensions())
     }
 }
 

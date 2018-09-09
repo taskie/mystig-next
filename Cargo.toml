@@ -6,8 +6,9 @@ authors = ["taskie <t@skie.jp>"]
 [dependencies]
 rlua = "0.9.3"
 rmp = "0.8"
-enum-map = "0.2.20"
-enum-map-derive = "0.2.4"
+nalgebra = "0.13.0"
+serde = "0.9.15"
+serde_json = "1.0"
 
 [dependencies.sdl2]
 version = "0.30"

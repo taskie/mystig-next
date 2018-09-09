@@ -1,8 +1,8 @@
-use std::io;
-use std::io::BufReader;
-use std::io::prelude::*;
-use std::fs::File;
 use std::collections::HashMap;
+use std::fs::File;
+use std::io;
+use std::io::prelude::*;
+use std::io::BufReader;
 
 pub struct Loader {
     string_by_path: HashMap<String, String>,
@@ -10,7 +10,9 @@ pub struct Loader {
 
 impl Loader {
     pub fn new() -> Loader {
-        Loader { string_by_path: HashMap::new() }
+        Loader {
+            string_by_path: HashMap::new(),
+        }
     }
 
     pub fn read_file(path: &str) -> Result<String, io::Error> {

@@ -1,10 +1,10 @@
-use super::button::Button;
 use super::axis::Axes2D;
+use super::button::Button;
 
 #[derive(Debug)]
 pub struct Joystick {
-    buttons: Vec<Button>,
-    axes_vec: Vec<Axes2D>,
+    pub buttons: Vec<Button>,
+    pub axes_vec: Vec<Axes2D>,
 }
 
 impl Joystick {

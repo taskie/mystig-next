@@ -1,17 +1,19 @@
 use std::collections::HashMap;
-use std::hash::Hash;
 use std::fmt::Debug;
+use std::hash::Hash;
 
 use super::button::Button;
 
 #[derive(Debug)]
 pub struct Keyboard {
-    buttons: Vec<Button>,
+    pub buttons: Vec<Button>,
 }
 
 impl Keyboard {
     pub fn new(len: usize) -> Keyboard {
-        Keyboard { buttons: vec![Button::new(); len] }
+        Keyboard {
+            buttons: vec![Button::new(); len],
+        }
     }
 
     pub fn update(&mut self) {

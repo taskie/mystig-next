@@ -8,6 +8,10 @@ impl Button {
         Button { status: -1 }
     }
 
+    pub fn reset(&mut self) {
+        self.status = -1
+    }
+
     pub fn up(&mut self) {
         if self.status >= 0 {
             self.status = -1

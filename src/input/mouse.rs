@@ -2,13 +2,13 @@ use super::button::Button;
 
 #[derive(Clone, Debug)]
 pub struct Mouse {
-    x: i32,
-    y: i32,
-    button: Button,
+    pub x: i32,
+    pub y: i32,
+    pub button: Button,
 }
 
 impl Mouse {
-    fn new() -> Mouse {
+    pub fn new() -> Mouse {
         Mouse {
             x: 0,
             y: 0,
@@ -16,7 +16,7 @@ impl Mouse {
         }
     }
 
-    fn update(&mut self) {
+    pub fn update(&mut self) {
         self.button.update();
     }
 }
